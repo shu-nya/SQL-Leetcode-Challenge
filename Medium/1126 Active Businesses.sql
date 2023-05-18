@@ -51,3 +51,16 @@ on e.event_type = b.event) c
 where c.occurences>c.average
 group by c.business_id
 having count(*) > 1
+
+
+-- My Solution
+SELECT c.business_id FROM(
+ SELECT * FROM Events e
+ JOIN(
+  SELECT event_type AS event, ROUND(AVG(occurences),2) AS avg_occur
+  FROM Events GROUP BY event_type) b            # group by bcoz we have to find avg of occurences based on event_type
+ ON e.event_type = b.event) c
+WHERE c.avg_occur < c.occurences
+GROUP BY c.business_id                          # group by bcoz we have to return single result for each business_id
+HAVING COUNT(*) > 1;
+
