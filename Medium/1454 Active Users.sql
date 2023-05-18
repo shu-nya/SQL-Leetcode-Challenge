@@ -75,3 +75,14 @@ inner join accounts a
 on t1.id = a.id
 where datediff(t1.date_5,login_date) = 4
 order by id
+
+
+--My Solution
+SELECT c.id, c.login_date FROM(
+SELECT * FROM accounts a
+JOIN(
+ SELECT DISTINCT *, LEAD(login_date, 4) OVER(PARTITION BY id ORDER BY login_date) date_5      # use of lead over partition by
+ FROM logins) l
+ON a.id = l.id) c
+WHERE DATEDIFF(date_5, login_date) = 4               # use of datediff
+ORDER BY id;
